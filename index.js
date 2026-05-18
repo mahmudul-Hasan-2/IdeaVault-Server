@@ -33,6 +33,31 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
     const db = client.db("IdeaVault");
     const ideaColl = await db.collection("Ideas");
+    const categoriesColl = await db.collection("Categories");
+
+    // All get here
+
+    app.get("/trendingIdeas", async (req, res) => {
+      const allFeaturedIdeas = await ideaColl.find().limit(6).toArray();
+      res.json(allFeaturedIdeas);
+    });
+    app.get("/ideas", async (req, res) => {
+      const allIdeas = await ideaColl.find().toArray();
+      res.json(allIdeas);
+    });
+    app.get("/searchedIdeas", async (req, res) => {
+      const searchData = req.query.search;
+      const searchedIdeas = await ideaColl
+        .find({
+          name: { $regex: searchData, $options: "i" },
+        })
+        .toArray();
+      res.json(searchedIdeas);
+    });
+    app.get("/popularCategories", async (req, res) => {
+      const allCategories = await categoriesColl.find().limit(6).toArray();
+      res.json(allCategories);
+    });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
@@ -42,6 +67,7 @@ async function run() {
     // await client.close();
   }
 }
+run().catch(console.dir);
 
 app.listen(port, () => {
   console.log(`Port is running in http://localhost:${port}`);
