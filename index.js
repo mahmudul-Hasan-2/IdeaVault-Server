@@ -37,6 +37,11 @@ async function run() {
 
     // All get here
 
+    app.get("/categories", async (req, res) => {
+      const allCategories = await categoriesColl.find().toArray();
+      res.json(allCategories);
+    });
+
     app.get("/trendingIdeas", async (req, res) => {
       const allFeaturedIdeas = await ideaColl.find().limit(6).toArray();
       res.json(allFeaturedIdeas);
@@ -49,7 +54,10 @@ async function run() {
       const searchData = req.query.search;
       const searchedIdeas = await ideaColl
         .find({
-          name: { $regex: searchData, $options: "i" },
+          $or: [
+            { name: { $regex: searchData, $options: "i" } },
+            { category: { $regex: searchData, $options: "i" } },
+          ],
         })
         .toArray();
       res.json(searchedIdeas);
@@ -57,6 +65,15 @@ async function run() {
     app.get("/popularCategories", async (req, res) => {
       const allCategories = await categoriesColl.find().limit(6).toArray();
       res.json(allCategories);
+    });
+
+    // All Post here
+    app.post("/idea", async (req, res) => {
+      const ideaInf = req.body;
+
+      const result = await ideaColl.insertOne(ideaInf);
+
+      res.json(result);
     });
 
     console.log(
