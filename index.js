@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = process.env.MONGODB_URI;
 
 app.use(
@@ -33,6 +33,7 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
     const db = client.db("IdeaVault");
     const ideaColl = await db.collection("Ideas");
+    const commentsColl = await db.collection("Comments");
     const categoriesColl = await db.collection("Categories");
 
     // All get here
@@ -50,6 +51,13 @@ async function run() {
       const allIdeas = await ideaColl.find().toArray();
       res.json(allIdeas);
     });
+    app.get("/idea/:id", async (req, res) => {
+      const id = req.params.id;
+      const idea = await ideaColl.findOne({
+        _id: new ObjectId(id),
+      });
+      res.json(idea);
+    });
     app.get("/searchedIdeas", async (req, res) => {
       const searchData = req.query.search;
       const searchedIdeas = await ideaColl
@@ -66,6 +74,10 @@ async function run() {
       const allCategories = await categoriesColl.find().limit(6).toArray();
       res.json(allCategories);
     });
+    app.get("/comments", async (req, res) => {
+      const result = await commentsColl.find().toArray();
+      res.json(result);
+    });
 
     // All Post here
     app.post("/idea", async (req, res) => {
@@ -73,6 +85,12 @@ async function run() {
 
       const result = await ideaColl.insertOne(ideaInf);
 
+      res.json(result);
+    });
+
+    app.post("/comment", async (req, res) => {
+      const commentInf = req.body;
+      const result = await commentsColl.insertOne(commentInf);
       res.json(result);
     });
 
