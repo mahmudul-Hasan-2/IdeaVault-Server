@@ -5,6 +5,7 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { jwtVerify, createRemoteJWKSet } = require("jose-cjs");
 const uri = process.env.MONGODB_URI;
 
 app.use(
@@ -14,9 +15,31 @@ app.use(
 );
 app.use(express.json());
 
+const JWKS = createRemoteJWKSet(
+  new URL(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/auth/jwks`),
+);
+
 app.get("/", (req, res) => {
   res.send("Welcome to IdeaVault server");
 });
+
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+  const token = authHeader.split("")[1];
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, JWKS);
+    next();
+  } catch (err) {
+    console.error("Token validation failed:", err);
+  }
+};
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -51,7 +74,7 @@ async function run() {
       const allIdeas = await ideaColl.find().toArray();
       res.json(allIdeas);
     });
-    app.get("/idea/:id", async (req, res) => {
+    app.get("/idea/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const idea = await ideaColl.findOne({
         _id: new ObjectId(id),
