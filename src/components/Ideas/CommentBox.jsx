@@ -5,6 +5,7 @@ import Image from "next/image";
 import React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import EditCommentModal from "./EditCommentModal";
+import DeleteCommentModal from "./DeleteCommentModal";
 
 const CommentBox = ({ comment }) => {
   const { data } = useSession();
@@ -15,25 +16,28 @@ const CommentBox = ({ comment }) => {
     <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-sky-50 to-white p-5 sm:p-6 shadow-xl shadow-sky-300/30">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-r from-sky-200/40 via-transparent to-violet-100/30" />
       {comment?.userId === user?.id ? (
-        <div className="dropdown dropdown-bottom dropdown-end absolute right-5 top-2">
-          <div tabIndex={0} role="button" className="btn btn-circle">
-            <BsThreeDots></BsThreeDots>
-          </div>
-          <ul
-            tabIndex="-1"
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+        <div className="dropdown dropdown-bottom dropdown-end absolute right-5 top-2 z-10">
+          <label
+            tabIndex={0}
+            className="btn btn-circle btn-ghost text-slate-700 hover:bg-slate-100"
           >
-            <li>
-              <EditCommentModal comment={comment}></EditCommentModal>
+            <BsThreeDots size={18} />
+          </label>
+          <ul className="dropdown-content w-56 bg-white p-2 shadow-xl border border-slate-200 rounded-xl overflow-visible space-y-1">
+            {" "}
+            <li className="rounded-2xl bg-slate-50 hover:bg-slate-100">
+              <div className="w-full">
+                <EditCommentModal comment={comment} />
+              </div>
             </li>
-            <li>
-              <button className="btn bg-red-500 text-white">Delete</button>
+            <li className="rounded-2xl bg-slate-50 hover:bg-slate-100">
+              <div className="w-full">
+                <DeleteCommentModal comment={comment} />
+              </div>
             </li>
           </ul>
         </div>
-      ) : (
-        ""
-      )}
+      ) : null}
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
         <Image
           src={comment?.image}

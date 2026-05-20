@@ -4,7 +4,7 @@ import React from "react";
 
 const TrendingCard = ({ idea }) => {
   return (
-    <div className="rounded space-y-5 shadow hover:scale-102 duration-700">
+    <div className="rounded space-y-5 shadow hover:-translate-y-2 duration-700">
       <Image
         src={idea.image}
         alt={idea.name}

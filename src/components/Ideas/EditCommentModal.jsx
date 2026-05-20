@@ -28,15 +28,20 @@ export default function EditCommentModal({ comment }) {
     const formData = new FormData(e.target);
     const editedData = Object.fromEntries(formData);
 
+    console.log(editedData);
+
     try {
       // Add your API call here
+      console.log(`http://localhost:5000/comment/${comment._id}`);
       const res = await fetch(`http://localhost:5000/comment/${comment._id}`, {
         method: "PATCH",
         headers: {
-          "Content/type": "application/json",
+          "Content-type": "application/json",
         },
         body: JSON.stringify(editedData),
       });
+      const data = await res.json();
+      console.log(data);
       toast.success("Comment updated successfully!");
       document.getElementById("my_modal_5").close();
     } catch (error) {
@@ -52,7 +57,7 @@ export default function EditCommentModal({ comment }) {
       {isCommentOwner ? (
         <button
           onClick={() => document.getElementById("my_modal_5").showModal()}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 px-5 py-3 font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 px-5 py-2 font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full"
           title="Edit your comment"
         >
           <Pencil size={18} />
@@ -60,7 +65,7 @@ export default function EditCommentModal({ comment }) {
         </button>
       ) : (
         <div
-          className="flex items-center gap-2 rounded-xl bg-gray-300 px-5 py-3 font-semibold text-gray-600 shadow-lg cursor-not-allowed opacity-60"
+          className="flex items-center gap-2 rounded-xl bg-gray-300 px-5 py-3 font-semibold text-gray-600 shadow-lg cursor-not-allowed opacity-60 w-full"
           title="You can only edit your own comments"
         >
           <Pencil size={18} />

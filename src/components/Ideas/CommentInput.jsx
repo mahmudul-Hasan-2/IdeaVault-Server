@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-const CommentInput = () => {
+const CommentInput = ({ idea }) => {
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +25,7 @@ const CommentInput = () => {
       userId: user?.id,
       image: user?.image,
       name: user?.name,
+      ideaId: idea?._id,
     };
     try {
       const res = await fetch("http://localhost:5000/comment", {

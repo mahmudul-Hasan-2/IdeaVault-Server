@@ -9,9 +9,13 @@ const IdeaDetailsPage = async ({ params }) => {
   const { id } = await params;
   const res = await fetch(`http://localhost:5000/idea/${id}`);
   const idea = await res.json();
+  console.log(idea);
 
   const commentRes = await fetch(`http://localhost:5000/comments`);
-  const comments = await commentRes.json();
+  const allComments = await commentRes.json();
+  console.log(allComments);
+  const comments = allComments.filter((comment) => comment.ideaId === idea._id);
+  console.log(comments);
 
   console.log(idea);
   return (
@@ -40,8 +44,9 @@ const IdeaDetailsPage = async ({ params }) => {
               </div>
             ))}
           </span>
-          <p>{idea.detailedDescription}</p>
-
+          <p className="break-words whitespace-pre-wrap text-slate-700">
+            {idea.detailedDescription}
+          </p>
           <div className="space-y-6 pt-4 border-t border-gray-300">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
@@ -80,7 +85,7 @@ const IdeaDetailsPage = async ({ params }) => {
         </div>
       </div>
       <div>
-        <CommentInput></CommentInput>
+        <CommentInput idea={idea}></CommentInput>
       </div>
       <div className="space-y-4 mt-5">
         <div>
