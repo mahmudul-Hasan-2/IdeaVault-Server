@@ -94,6 +94,19 @@ async function run() {
       res.json(result);
     });
 
+    // All Patch here
+    app.patch("/comment/:id", async (req, res) => {
+      const id = req.params.id;
+      const commentInf = req.body;
+
+      const result = await commentsColl.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: commentInf },
+      );
+      ch;
+      res.json(result);
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
     );
