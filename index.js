@@ -49,7 +49,6 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Token validation failed:", err);
-    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
@@ -138,12 +137,37 @@ async function run() {
       res.json(result);
     });
 
+    app.patch("/idea/:id", async (req, res) => {
+      const { id } = req.params;
+      const idea = req.body;
+
+      const result = await ideaColl.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: idea,
+        },
+      );
+      res.json(result);
+    });
+
     // All delete here
 
     app.delete("/comment/:id", async (req, res) => {
       const { id } = req.params;
 
       const result = await commentsColl.deleteOne({ _id: new ObjectId(id) });
+      res.json(result);
+    });
+
+    app.delete("/idea/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await ideaColl.deleteOne({
+        _id: new ObjectId(id),
+      });
+
       res.json(result);
     });
 
