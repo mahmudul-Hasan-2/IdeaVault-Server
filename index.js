@@ -16,30 +16,12 @@ app.use(
 app.use(express.json());
 
 const JWKS = createRemoteJWKSet(
-  new URL(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/auth/jwks`),
+  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`),
 );
 
 app.get("/", (req, res) => {
   res.send("Welcome to IdeaVault server");
 });
-
-const verifyToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-  const token = authHeader.split("")[1];
-  if (!token) {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-
-  try {
-    const { payload } = await jwtVerify(token, JWKS);
-    next();
-  } catch (err) {
-    console.error("Token validation failed:", err);
-  }
-};
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -48,6 +30,29 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, JWKS);
+
+    next();
+  } catch (err) {
+    console.error("Token validation failed:", err);
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -76,10 +81,13 @@ async function run() {
     });
     app.get("/idea/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
-      const idea = await ideaColl.findOne({
+
+      const query = {
         _id: new ObjectId(id),
-      });
-      res.json(idea);
+      };
+
+      const result = await ideaColl.findOne(query);
+      res.json(result);
     });
     app.get("/searchedIdeas", async (req, res) => {
       const searchData = req.query.search;
