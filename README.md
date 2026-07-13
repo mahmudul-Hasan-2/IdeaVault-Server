@@ -50,17 +50,10 @@ MONGODB_URI=your_mongodb_connection_string
 
 ### 4. Run the Server
 
-For Development (with Nodemon):
-
 ```bash
-npm run dev
+nodemon index.js
 ```
 
-For Production:
-
-```bash
-npm start
-```
 
 ## 🛣️ API Endpoints (Base URL: `http://localhost:5000`)
 
