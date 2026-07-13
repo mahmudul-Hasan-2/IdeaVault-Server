@@ -19,3 +19,62 @@ This server is built using the modern Node.js ecosystem with the following core 
 * **Environment Security:** Critical credentials and ports are managed securely via `.env`.
 * **CORS Enabled:** Ready to communicate safely with your frontend application.
 * **Development Workflow:** Configured with `nodemon` for hot-reloading during development.
+
+---
+
+## ⚙️ Getting Started
+
+Follow these steps to set up and run the server locally on your machine:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/mahmudul-Hasan-2/IdeaVault-Server.git
+cd IdeaVault-Server
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Setup
+
+Create a `.env` file in the root directory and define your port and database URI:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+```
+
+### 4. Run the Server
+
+For Development (with Nodemon):
+
+```bash
+npm run dev
+```
+
+For Production:
+
+```bash
+npm start
+```
+
+## 🛣️ API Endpoints (Base URL: `http://localhost:5000`)
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/` | Server health check (Returns "Hello World!") |
+
+*(More endpoints for crowdfunding campaigns and users will be added soon!)*
+
+## 👨‍💻 Author
+
+**Mahmudul Hasan Nirab**
+* GitHub: [@mahmudul-Hasan-2](https://github.com/mahmudul-Hasan-2)
+
+## 📄 License
+
+This project is licensed under the **ISC License**.
